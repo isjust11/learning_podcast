@@ -36,7 +36,7 @@ const formSchema = z.object({
   podcastDescription: z.string().min(2),
 })
 
-const voiceCategories = ['alloy','echo','fable','onyx','nova','shimmer']
+const voiceCategories = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']
 
 function onSubmit(values: z.infer<typeof formSchema>) {
   console.log(values)
@@ -44,27 +44,21 @@ function onSubmit(values: z.infer<typeof formSchema>) {
 
 
 const CreatePodcast = () => {
-  const [voiceType,setVoiceType] = useState<string | null>(null)
-  const [isSubmitting,setIsSubmitting] = useState(false)
-  const [imagePrompt,setImagePrompt] = useState('')
-  const [audioStorageId,setAudioStorageId] = useState<Id<"_storage">| null>(null)
-  const [imageStorageId,setImageStorageId] = useState<Id<"_storage">| null>(null)
-  const [audioUrl,setAudioUrl] = useState<string>('')
-  const [imageUrl,setImageUrl] = useState<string>('')
-  const [isGenerating,setIsGenerating] = useState(false)
-  const [audioDuration,setAudioDuration] = useState(0)
-  const [thumbnail,setThumbnail] = useState<string>('')
-
-
+  const [voiceType, setVoiceType] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [imagePrompt, setImagePrompt] = useState('')
+  const [audioStorageId, setAudioStorageId] = useState<Id<"_storage"> | null>(null)
+  const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | null>(null)
+  const [audioUrl, setAudioUrl] = useState<string>('')
+  const [imageUrl, setImageUrl] = useState<string>('')
+  const [voicePrompt, setVoicePrompt] = useState<string>('')
+  const [audioDuration, setAudioDuration] = useState(0)
+  const [thumbnail, setThumbnail] = useState<string>('')
 
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-
-
-
-
       podcastTitle: "",
       podcastDescription: "",
     },
@@ -90,22 +84,22 @@ const CreatePodcast = () => {
             />
             <div className="flex flex-col gap-2.5">
               <Label className="text-16 font-bold text-white-1">Select AI Voice</Label>
-              <Select onValueChange={(value)=>setVoiceType(value)}>
+              <Select onValueChange={(value) => setVoiceType(value)}>
                 <SelectTrigger className={cn("text-16 w-full border-none bg-black-1 text-gray-1")}>
-                  <SelectValue placeholder="Select a voice" 
-                  className="placeholder:text-gray-1"
+                  <SelectValue placeholder="Select a voice"
+                    className="placeholder:text-gray-1"
                   />
                 </SelectTrigger>
-                <SelectContent className="text-16 border-none font-bold text-white-1 bg-black-1 focus:ring-orange-1">
-                  {voiceCategories.map((voice,index)=>(
+                <SelectContent className="text-16 border-none font-bold text-white-1 bg-black-1 focus-visible:ring-offset-orange-1">
+                  {voiceCategories.map((voice, index) => (
                     <SelectItem key={index} value={voice}>{voice}</SelectItem>
                   ))}
                 </SelectContent>
-                  {
-                    voiceType && (
-                      <audio src={`/voices/${voiceType}.mp3`} autoPlay className="hidden"/>
-                    )
-                  }
+                {
+                  voiceType && (
+                    <audio src={`/voices/${voiceType}.mp3`} autoPlay className="hidden" />
+                  )
+                }
               </Select>
             </div>
             <FormField
@@ -125,14 +119,22 @@ const CreatePodcast = () => {
             />
           </div>
           <div className="flex flex-col pt-10">
-              <GeneratePodcast />
-              <GenerateThumbnail />
+            <GeneratePodcast 
+            setAudioStorageId={setAudioStorageId}
+            setAudio={setAudioUrl}
+            voiceType={voiceType}
+            audio={audioUrl}
+            voicePrompt ={voicePrompt}
+            setVoicePrompt={setVoicePrompt}
+            setAudioDuration={setAudioDuration}
+            />
+            <GenerateThumbnail />
 
-              <div className="mt-10 w-full">
-                <Button type="submit" className="text-16 font-extrabold transition-all duration-300 text-white-1 bg-orange-1 w-full hover:bg-black-1">
-                  {isSubmitting ? (<><Loader className="w-4 h-4 mr-2 animate-spin"/> 'Generating...'</>) : ('Submit & Publish Podcast')}
-                </Button>
-              </div>
+            <div className="mt-10 w-full">
+              <Button type="submit" className="text-16 font-extrabold transition-all duration-300 text-white-1 bg-orange-1 w-full hover:bg-black-1">
+                {isSubmitting ? (<><Loader className="w-4 h-4 mr-2 animate-spin" /> 'Generating...'</>) : ('Submit & Publish Podcast')}
+              </Button>
+            </div>
           </div>
         </form>
 
