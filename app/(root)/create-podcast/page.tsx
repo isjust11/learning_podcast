@@ -122,17 +122,23 @@ const CreatePodcast = () => {
             <GeneratePodcast 
             setAudioStorageId={setAudioStorageId}
             setAudio={setAudioUrl}
-            voiceType={voiceType}
+            voiceType={voiceType || ''}
             audio={audioUrl}
             voicePrompt ={voicePrompt}
             setVoicePrompt={setVoicePrompt}
             setAudioDuration={setAudioDuration}
             />
-            <GenerateThumbnail />
+            <GenerateThumbnail 
+            setImage={setImageUrl}
+            setImageStorageId={setImageStorageId || null}
+            image={imageUrl}
+            imagePrompt={imagePrompt}
+            setImagePrompt={setImagePrompt}
+            />
 
             <div className="mt-10 w-full">
               <Button type="submit" className="text-16 font-extrabold transition-all duration-300 text-white-1 bg-orange-1 w-full hover:bg-black-1">
-                {isSubmitting ? (<><Loader className="w-4 h-4 mr-2 animate-spin" /> 'Generating...'</>) : ('Submit & Publish Podcast')}
+                {isSubmitting ? (<><Loader className="w-4 h-4 mr-2 animate-spin" /> Generating...</>) : ('Submit & Publish Podcast')}
               </Button>
             </div>
           </div>

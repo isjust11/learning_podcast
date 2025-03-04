@@ -9,7 +9,7 @@ import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { v4 as uuidv4 } from 'uuid'
 import { useUploadFiles } from '@xixixao/uploadstuff/react'
-
+import { toast } from 'sonner'
 const useGeneratePodcast = ({
   setAudio, voiceType,voicePrompt, setAudioStorageId
 }: GeneratePodcastProps) => {
@@ -25,6 +25,8 @@ const useGeneratePodcast = ({
     setAudio('')
     if(!voicePrompt) {
       //todo: show error message
+      toast.error('Please provide a voiceType to generate a podcast')
+      console.log('run empty prompt')
       return setIsGenerating(false)
     }
     try{
@@ -38,11 +40,16 @@ const useGeneratePodcast = ({
       const storageId = (uploaded[0].response as any).storageId;
       setAudioStorageId(storageId);
       const audioUrl = await getAudioUrl(storageId)
-      setAudio(audioUrl);
+      setAudio(audioUrl || '');
       setIsGenerating(false);
       //todo: show success message
-      
+      toast.success('Podcast generated successfully')
     }catch(error){
+      if (error instanceof Error && error.message.includes('429')) {
+        toast.error('OpenAI quota exceeded. Please check your billing details.')
+      } else {
+        toast.error('Error generating podcast')
+      }
       console.log('Error generating podcast', error)
     }finally{
       setIsGenerating(false)
@@ -69,8 +76,8 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
         />
       </div>
       <div className='mt-5 w-full max-w-[200px]'>
-        <Button type="submit" className="text-16 font-bold text-white-1 bg-orange-1">
-          {isGenerating ? (<><Loader className="w-4 h-4 mr-2 animate-spin" /> 'Generating...'</>) : ('Generate Podcast')}
+        <Button type="submit" className="text-16 font-bold text-white-1 bg-orange-1" onClick={generatePodcast}>
+          {isGenerating ? (<><Loader className="w-4 h-4 mr-2 animate-spin" /> Generating...</>) : ('Generate Podcast')}
         </Button>
       </div>
       {
