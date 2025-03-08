@@ -31,6 +31,7 @@ import GeneratePodcast from "@/components/GeneratePodcast"
 import GenerateThumbnail from "@/components/GenerateThumbnail"
 import { Loader, Loader2 } from "lucide-react"
 import { Id } from "@/convex/_generated/dataModel"
+import { toast } from "sonner"
 const formSchema = z.object({
   podcastTitle: z.string().min(2),
   podcastDescription: z.string().min(2),
@@ -38,9 +39,6 @@ const formSchema = z.object({
 
 const voiceCategories = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']
 
-function onSubmit(values: z.infer<typeof formSchema>) {
-  console.log(values)
-}
 
 
 const CreatePodcast = () => {
@@ -55,6 +53,20 @@ const CreatePodcast = () => {
   const [audioDuration, setAudioDuration] = useState(0)
   const [thumbnail, setThumbnail] = useState<string>('')
 
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true)
+    try{
+      console.log(values)
+      
+      toast.success('Podcast created successfully')
+    } catch(error){
+      console.log(error)
+      toast.error('Error creating podcast')
+      setIsSubmitting(false)
+    }
+  }
+  
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -137,7 +149,7 @@ const CreatePodcast = () => {
             />
 
             <div className="mt-10 w-full">
-              <Button type="submit" className="text-16 font-extrabold transition-all duration-300 text-white-1 bg-orange-1 w-full hover:bg-black-1">
+              <Button type="submit" onClick={onSubmit} className="text-16 font-extrabold transition-all duration-300 text-white-1 bg-orange-1 w-full hover:bg-black-1">
                 {isSubmitting ? (<><Loader className="w-4 h-4 mr-2 animate-spin" /> Generating...</>) : ('Submit & Publish Podcast')}
               </Button>
             </div>
